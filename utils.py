@@ -60,3 +60,44 @@ def find_qwerty_words(
         for word in CLEAN_WORD_LIST
         if len(word) == n and set(word).issubset(allowed_chars)
     )
+
+
+def find_shifted_word_pairs(n: int) -> list[tuple[str, str, str]]:
+    """Find pairs of words where one is formed by shifting the other by `n` characters.
+
+    Args:
+        n: The shift amount.
+
+    Returns:
+        An alphabetically sorted list of tuples in the format:
+        (word1, word2, shift_direction).
+
+    Raises:
+        ValueError: If `n` is not between 1 and 13.
+    """
+    if not (1 <= n <= 13):
+        raise ValueError("The shift amount 'n' must be between 1 and 13.")
+
+    pairs = set()
+    results = []
+
+    for word in CLEAN_WORD_LIST:
+        if len(word) >= 3:
+            shifted_word = "".join(
+                chr(((ord(char) - 97 + n) % 26) + 97) for char in word
+            )
+
+            if shifted_word in CLEAN_WORD_LIST:
+                w1, w2 = min(word, shifted_word), max(word, shifted_word)
+
+                if (w1, w2) not in pairs:
+                    pairs.add((w1, w2))
+
+                    test_shift = "".join(
+                        chr(((ord(char) - 97 + n) % 26) + 97) for char in w1
+                    )
+                    shift_direction = f"+{n}" if test_shift == w2 else f"-{n}"
+
+                    results.append((w1, w2, shift_direction))
+
+    return sorted(results)
