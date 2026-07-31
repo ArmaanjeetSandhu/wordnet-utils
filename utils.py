@@ -83,6 +83,49 @@ def find_leetspeak_words(n: int) -> list[str]:
     )
 
 
+def find_strobogrammatic_words(n: int) -> list[str]:
+    """Find words of length `n` that look the same when rotated 180 degrees.
+
+    This function checks for words built from letters that have 180-degree
+    rotational symmetries (e.g., 'o', 's', 'x') or rotational pairs (e.g.,
+    'm' and 'w', 'b' and 'q').
+
+    Args:
+        n: The exact length of the desired words.
+
+    Returns:
+        An alphabetically sorted list of matching words.
+    """
+    rotation_map = {
+        "o": "o",
+        "i": "i",
+        "x": "x",
+        "s": "s",
+        "z": "z",
+        "l": "l",
+        "b": "q",
+        "q": "b",
+        "d": "p",
+        "p": "d",
+        "m": "w",
+        "w": "m",
+        "n": "u",
+        "u": "n",
+    }
+
+    allowed_chars = set(rotation_map.keys())
+    results = []
+
+    for word in CLEAN_WORD_LIST:
+        if len(word) == n and set(word).issubset(allowed_chars):
+            rotated_word = "".join(rotation_map[char] for char in reversed(word))
+
+            if rotated_word == word:
+                results.append(word)
+
+    return sorted(results)
+
+
 def find_shifted_word_pairs(n: int) -> list[tuple[str, str, str]]:
     """Find pairs of words where one is formed by shifting the other by `n` characters.
 
