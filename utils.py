@@ -62,6 +62,27 @@ def find_qwerty_words(
     )
 
 
+def find_leetspeak_words(n: int) -> list[str]:
+    """Find words of length `n` built exclusively of letters that resemble digits.
+
+    The qualifying letters are: O, I, Z, E, A, S, G, L, and B, which are
+    commonly used as stand-ins for 0, 1, 2, 3, 4, 5, 6, 7, and 8 respectively.
+
+    Args:
+        n: The exact length of the desired words.
+
+    Returns:
+        An alphabetically sorted list of matching words.
+    """
+    allowed_chars = set("oizeasglb")
+
+    return sorted(
+        word
+        for word in CLEAN_WORD_LIST
+        if len(word) == n and set(word).issubset(allowed_chars)
+    )
+
+
 def find_shifted_word_pairs(n: int) -> list[tuple[str, str, str]]:
     """Find pairs of words where one is formed by shifting the other by `n` characters.
 
