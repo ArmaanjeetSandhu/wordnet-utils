@@ -165,3 +165,23 @@ def find_shifted_word_pairs(n: int) -> list[tuple[str, str, str]]:
                     results.append((w1, w2, shift_direction))
 
     return sorted(results)
+
+
+def find_anadromes(n: int) -> list[str]:
+    """Find words of length `n` that form a different valid word when reversed.
+
+    An anadrome (or emordnilap) is a word that makes sense both forward and
+    backward, but forms a different word in each direction (e.g., 'desserts'
+    and 'stressed'). Palindromes are explicitly excluded.
+
+    Args:
+        n: The exact length of the desired words.
+
+    Returns:
+        An alphabetically sorted list of matching words.
+    """
+    return sorted(
+        word
+        for word in CLEAN_WORD_LIST
+        if len(word) == n and word < word[::-1] and word[::-1] in CLEAN_WORD_LIST
+    )
