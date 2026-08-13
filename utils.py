@@ -185,3 +185,17 @@ def find_anadromes(n: int) -> list[str]:
         for word in CLEAN_WORD_LIST
         if len(word) == n and word < word[::-1] and word[::-1] in CLEAN_WORD_LIST
     )
+
+
+def find_isograms(n: int) -> list[str]:
+    """Find words of length `n` where no letter is repeated (isograms).
+
+    Args:
+        n: The exact length of the desired words.
+
+    Returns:
+        An alphabetically sorted list of matching words.
+    """
+    return sorted(
+        word for word in CLEAN_WORD_LIST if len(word) == n and len(set(word)) == n
+    )
