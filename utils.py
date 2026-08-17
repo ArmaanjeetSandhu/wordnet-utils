@@ -199,3 +199,37 @@ def find_isograms(n: int) -> list[str]:
     return sorted(
         word for word in CLEAN_WORD_LIST if len(word) == n and len(set(word)) == n
     )
+
+
+def find_wrong_article_words(n: int) -> list[str]:
+    """Find words of length `n` that form a valid word with the wrong indefinite article.
+
+    Matches words that start with 'a' followed by a valid word starting
+    with a vowel (e.g., 'aisle' -> 'a' + 'isle'), or start with 'an' followed
+    by a valid word starting with a consonant (e.g., 'antic' -> 'an' + 'tic').
+
+    Args:
+        n: The exact length of the desired words.
+
+    Returns:
+        An alphabetically sorted list of matching words.
+    """
+    vowels = set("aeiou")
+    results = []
+
+    for word in CLEAN_WORD_LIST:
+        if len(word) != n:
+            continue
+
+        if word.startswith("a"):
+            rem_a = word[1:]
+            if rem_a and rem_a[0] in vowels and rem_a in CLEAN_WORD_LIST:
+                results.append(word)
+                continue
+
+        if word.startswith("an"):
+            rem_an = word[2:]
+            if rem_an and rem_an[0] not in vowels and rem_an in CLEAN_WORD_LIST:
+                results.append(word)
+
+    return sorted(results)
