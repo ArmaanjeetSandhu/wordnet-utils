@@ -1,3 +1,4 @@
+from string import ascii_lowercase
 from typing import Literal
 from nltk.corpus import words, wordnet as wn
 
@@ -233,3 +234,76 @@ def find_wrong_article_words(n: int) -> list[str]:
                 results.append(word)
 
     return sorted(results)
+
+
+def find_word_ladders(start_word: str, end_word: str) -> list[list[str]]:
+    """Find every shortest word ladder between two words of equal length.
+
+    A word ladder transforms one word into another by changing a single
+    letter at a time, where every intermediate rung is itself a valid word.
+    Where several ladders tie for the fewest steps, all of them are returned.
+
+    The start and end words are always treated as valid rungs, even if they
+    are absent from the word list; every intermediate rung must be present.
+
+    Args:
+        start_word: The word to transform from.
+        end_word: The word to transform into.
+
+    Returns:
+        An alphabetically sorted list of ladders, each a list of words
+        beginning with `start_word` and ending with `end_word`. Every ladder
+        returned has the same, minimal number of steps, given by
+        `len(ladder) - 1`. Returns an empty list if no ladder exists.
+
+    Raises:
+        ValueError: If the two words are not of the same length.
+    """
+    start_word = start_word.lower()
+    end_word = end_word.lower()
+
+    if len(start_word) != len(end_word):
+        raise ValueError("The start word and end word must be the exact same length.")
+
+    word_length = len(start_word)
+    candidates = {word for word in CLEAN_WORD_LIST if len(word) == word_length}
+    candidates.update((start_word, end_word))
+
+    frontier = {start_word}
+    visited = {start_word}
+    predecessors: dict[str, list[str]] = {start_word: []}
+
+    while frontier and end_word not in visited:
+        next_frontier = set()
+
+        for current_word in frontier:
+            for i in range(word_length):
+                for char in ascii_lowercase:
+                    if char == current_word[i]:
+                        continue
+
+                    next_word = current_word[:i] + char + current_word[i + 1 :]
+
+                    if next_word in candidates and next_word not in visited:
+                        next_frontier.add(next_word)
+                        predecessors.setdefault(next_word, []).append(current_word)
+
+        visited |= next_frontier
+        frontier = next_frontier
+
+    if end_word not in predecessors:
+        return []
+
+    ladders_to: dict[str, list[list[str]]] = {start_word: [[start_word]]}
+
+    def build_ladders(word: str) -> list[list[str]]:
+        if word not in ladders_to:
+            ladders_to[word] = [
+                ladder + [word]
+                for parent in predecessors[word]
+                for ladder in build_ladders(parent)
+            ]
+
+        return ladders_to[word]
+
+    return sorted(build_ladders(end_word))
